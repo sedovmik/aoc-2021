@@ -6,7 +6,9 @@ fun main() {
 
         init {
             for ((no, line) in nums.withIndex()) {
-                val ints = line.trim().split("\\s+".toRegex()).map(String::toInt)
+                val ints = line.split(" ")
+                    .filter { it.isNotEmpty() }
+                    .map { it.trim().toInt() }
                 for ((i, num) in ints.withIndex()) {
                     xs[no].add(num)
                     ys[i].add(num)
@@ -73,8 +75,6 @@ fun main() {
 
     fun part2(input: Sequence<String>): Int {
         val (numbers, boards) = read(input)
-        var cur = boards
-
         for (number in numbers) {
             val it = boards.iterator()
             while (it.hasNext()) {
@@ -91,19 +91,19 @@ fun main() {
         return 0
     }
 
-    readInput("Day04_test") {
-        check(part1(it) == 4512)
+    test("Day04_test", 4512) {
+        part1(it)
     }
 
-    readInput("Day04") {
-        println(part1(it))
+    solve("Day04") {
+        part1(it)
     }
 
-    readInput("Day04_test") {
-        check(part2(it) == 1924)
+    test("Day04_test", 1924) {
+        part2(it)
     }
 
-    readInput("Day04") {
-        println(part2(it))
+    solve("Day04") {
+        part2(it)
     }
 }

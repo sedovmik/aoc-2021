@@ -13,15 +13,15 @@ fun main() {
             .count { it }
     }
 
-    readInput("Day01_test") {
-        check(part1(it) == 7)
+    test("Day01_test", 7) {
+        part1(it)
     }
 
-    readInput("Day01") {
-        println(part1(it))
+    solve("Day01") {
+        part1(it)
     }
 
-    readInput("Day01") {
-        println(part2(it))
+    solve("Day01") {
+        part2(it)
     }
 }

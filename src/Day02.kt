@@ -56,19 +56,19 @@ fun main() {
             .ans()
     }
 
-    readInput("Day02_test") {
-        check(part1(it) == 150)
+    test("Day02_test", 150) {
+        part1(it)
     }
 
-    readInput("Day02") {
-        println(part1(it))
+    solve("Day02") {
+        part1(it)
     }
 
-    readInput("Day02_test") {
-        check(part2(it) == 900)
+    test("Day02_test", 900) {
+        part2(it)
     }
 
-    readInput("Day02") {
-        println(part2(it))
+    solve("Day02") {
+        part2(it)
     }
 }

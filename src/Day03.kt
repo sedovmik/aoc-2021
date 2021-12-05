@@ -72,19 +72,19 @@ fun main() {
         return oxygen * co2
     }
 
-    readInput("Day03_test") {
-        check(part1(it, 5) == 198)
+    test("Day03_test", 198) {
+        part1(it, 5)
     }
 
-    readInput("Day03") {
-        println(part1(it, 12))
+    solve("Day03") {
+        part1(it, 12)
     }
 
-    readInput("Day03_test") {
-        check(part2(it, 5) == 230)
+    test("Day03_test", 230) {
+        part2(it, 5)
     }
 
-    readInput("Day03") {
-        println(part2(it, 12))
+    solve("Day03") {
+        part2(it, 12)
     }
 }
