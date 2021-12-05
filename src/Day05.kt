@@ -1,4 +1,3 @@
-
 fun main() {
 
     fun parse(input: String): Line {
@@ -9,16 +8,14 @@ fun main() {
     }
 
     fun countPoint(lines: Sequence<Line>, includeDiagonal: Boolean): Int {
-        val idx = hashMapOf<Point, Int>()
-        lines.forEach { line ->
-            if (!line.isDiagonal || includeDiagonal) {
-                for (point in line.plot()) {
-                    idx.merge(point, 1, Int::plus)
-                }
+        return lines.filter { !it.isDiagonal || includeDiagonal }
+            .flatMap { it.plot() }
+            .fold(hashMapOf<Point, Int>()) { acc, point ->
+                acc.merge(point, 1, Int::plus)
+                acc
             }
-        }
-
-        return idx.filterValues { it >= 2 }.count()
+            .values
+            .count { it >= 2 }
     }
 
     fun part1(input: Sequence<String>): Int {
