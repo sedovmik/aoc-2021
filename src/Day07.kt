@@ -1,31 +1,23 @@
-import org.apache.commons.math3.stat.descriptive.moment.Mean
-import org.apache.commons.math3.stat.descriptive.rank.Median
 import kotlin.math.abs
-import kotlin.math.roundToInt
 
 fun main() {
 
     fun part1(input: Sequence<String>): Int {
         val ns = input.first()
             .split(',')
-            .map(String::toDouble)
-            .toDoubleArray()
+            .map(String::toInt)
 
-        val median = Median().evaluate(ns)
-        return ns.sumOf { abs(it - median) }
-            .roundToInt()
+        return ns.minOf { n -> ns.sumOf { abs(it - n) } }
     }
 
     fun part2(input: Sequence<String>): Int {
         val ns = input.first()
             .split(',')
-            .map(String::toDouble)
-            .toDoubleArray()
+            .map(String::toInt)
 
-        val mean = Mean().evaluate(ns)
-        val fuel = { d: Double -> d * (d + 1) / 2}
-        return ns.sumOf { fuel(abs(it - mean)) }
-            .roundToInt()
+        val fuel = { d: Int -> d * (d + 1) / 2 }
+        return (0..ns.maxOf { it })
+            .minOf { n -> ns.sumOf { fuel(abs(it - n)) } }
     }
 
     test("Day07_test", 37) {
