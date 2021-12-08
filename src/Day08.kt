@@ -17,56 +17,34 @@ fun main() {
 
         val (left, right) = input.split(" | ")
 
-        val signals = left
-            .split(' ')
-
-        val ds = hashMapOf<Int, Set<Char>>()
-
-        signals.forEach { signal ->
-            val set = signal.toSet()
-            when (signal.length) {
-                2 -> ds[1] = set
-                4 -> ds[4] = set
-                3 -> ds[7] = set
-                7 -> ds[8] = set
+        val freq = left
+            .fold(hashMapOf<Char, Int>()) { acc, ch ->
+                acc.merge(ch, 1, Int::plus)
+                acc
             }
-        }
 
-        signals.forEach { signal ->
-            if (signal.length == 6) {
-                // 0, 6, 9
-                val set = signal.toSet()
-                if (set.containsAll(ds.getValue(4))) {
-                    ds[9] = set
-                } else if (set.containsAll(ds.getValue(7))) {
-                    ds[0] = set
-                } else {
-                    ds[6] = set
-                }
-            }
-        }
+        val remap = { str: String ->
+            val ns = str.map { ch -> freq.getValue(ch) }
+                .sorted()
 
-        signals.forEach { signal ->
-            if (signal.length == 5) {
-                // 3, 5, 2
-                val set = signal.toSet()
-                if (set.containsAll(ds.getValue(1))) {
-                    ds[3] = set
-                } else if (ds.getValue(9).containsAll(set)) {
-                    ds[5] = set
-                } else {
-                    ds[2] = set
-                }
+            when (ns) {
+                listOf(4, 6, 7, 8, 8, 9) -> 0
+                listOf(8, 9) -> 1
+                listOf(4, 7, 7, 8, 8) -> 2
+                listOf(7, 7, 8, 8, 9) -> 3
+                listOf(6, 7, 8, 9) -> 4
+                listOf(6, 7, 7, 8, 9) -> 5
+                listOf(4, 6, 7, 7, 8, 9) -> 6
+                listOf(8, 8, 9) -> 7
+                listOf(4, 6, 7, 7, 8, 8, 9) -> 8
+                listOf(6, 7, 7, 8, 8, 9) -> 9
+                else -> error(str)
             }
         }
 
         return right.split(' ')
-            .map {
-                val cs = it.toSet()
-                ds.entries.find { e ->
-                    e.value == cs
-                }!!.key
-            }.fold(0) { acc, d -> acc * 10 + d }
+            .map(remap)
+            .fold(0) { acc, n -> acc * 10 + n }
     }
 
     fun part2(input: Sequence<String>): Int {
