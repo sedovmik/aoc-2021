@@ -7,9 +7,12 @@ fun <T : Any> test(name: String, expected: T, solver: (Sequence<String>) -> T) =
         val result = solver(it)
         if (expected != result) {
             error(
-                "Failed: $result != $expected " +
+                "$name Failed: $result != $expected " +
                         "[${System.currentTimeMillis() - startTime}ms]"
             )
+        } else {
+            println("$name Passed ($expected) " +
+                    "[${System.currentTimeMillis() - startTime}ms]")
         }
     }
 
