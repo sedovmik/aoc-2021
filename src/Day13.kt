@@ -40,7 +40,7 @@ fun main() {
 
         for (y in 0..height) {
             for (x in 0..width) {
-                if (dots.any { it.x == x && it.y == y }) print('#') else print('.')
+                if (dots.any { it.x == x && it.y == y }) print('\u2588') else print(' ')
             }
             println()
         }
