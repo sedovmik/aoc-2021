@@ -11,6 +11,10 @@ fun main() {
         }
     }
 
+    fun List<Point>.flip(fold: Fold): List<Point> {
+        return this.map(fold::flip).distinct()
+    }
+
     fun parse(input: Sequence<String>): Pair<List<Point>, List<Fold>> {
 
         val lines = input.toList()
@@ -44,15 +48,12 @@ fun main() {
 
     fun part1(input: Sequence<String>): Int {
         val (dots, folds) = parse(input)
-        val fold = folds.first()
-        return dots.map(fold::flip).distinct().count()
+        return dots.flip(folds.first()).count()
     }
 
     fun part2(input: Sequence<String>) {
         val (dots, folds) = parse(input)
-        draw(folds.fold(dots) { acc, fold ->
-            acc.map(fold::flip).distinct()
-        })
+        draw(folds.fold(dots, List<Point>::flip))
     }
 
     test("Day13_test", 17) {
