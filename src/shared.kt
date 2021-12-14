@@ -1,6 +1,13 @@
 import java.io.File
 import kotlin.math.abs
 
+fun <K> MutableMap<K, Long>.inc(key: K, delta: Long) =
+    merge(key, delta, Long::plus)
+
+fun <K> Iterable<K>.freq(): Map<K, Long> = fold(hashMapOf()) { acc, v ->
+    acc.also { acc.inc(v, 1) }
+}
+
 fun <T : Any> test(name: String, expected: T, solver: (Sequence<String>) -> T) =
     File("input", "$name.txt").useLines {
         val startTime = System.currentTimeMillis()
