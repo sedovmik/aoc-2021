@@ -4,13 +4,13 @@ fun main() {
         val (start, end) = input.split(" -> ")
         val (ax, ay) = start.split(",").map(String::toInt)
         val (bx, by) = end.split(",").map(String::toInt)
-        return Line(Point(ax, ay), Point(bx, by))
+        return Line(Vec2(ax, ay), Vec2(bx, by))
     }
 
     fun countPoint(lines: Sequence<Line>, includeDiagonal: Boolean): Int {
         return lines.filter { !it.isDiagonal || includeDiagonal }
             .flatMap { it.plot() }
-            .fold(hashMapOf<Point, Int>()) { acc, point ->
+            .fold(hashMapOf<Vec2, Int>()) { acc, point ->
                 acc.merge(point, 1, Int::plus)
                 acc
             }
