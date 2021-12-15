@@ -1,5 +1,4 @@
 import java.io.File
-import java.lang.Integer.min
 import java.util.*
 import kotlin.math.abs
 
@@ -39,8 +38,6 @@ data class Vec2(val x: Int, val y: Int) {
     operator fun plus(p: Vec2) = Vec2(p.x + x, p.y + y)
 }
 
-fun <T> List<List<T>>.contains(point: Vec2) = point.x in this.indices && point.y in this[point.x].indices
-
 data class Line(val a: Vec2, val b: Vec2) {
 
     val isDiagonal = a.x != b.x && a.y != b.y
@@ -74,28 +71,54 @@ data class Line(val a: Vec2, val b: Vec2) {
     }
 }
 
-class Grid<T>(val matrix: List<List<T>>) {
+fun <T> List<List<T>>.contains(v: Vec2) =
+    v.y in this.indices && v.x in this[v.y].indices
+
+class Grid<T>(val matrix: List<MutableList<T>>) {
 
     val h = matrix.size
     val w = matrix[0].size
 
-    private val offsets = listOf(
+    private val offsets4 = listOf(
         Vec2(1, 0), Vec2(-1, 0),
         Vec2(0, 1), Vec2(0, -1)
+    )
+
+    private val offsets8 = listOf(
+        Vec2(1, 0), Vec2(1, 1),
+        Vec2(0, 1), Vec2(-1, 1),
+        Vec2(-1, 0), Vec2(-1, -1),
+        Vec2(0, -1), Vec2(1, -1),
     )
 
     val Vec2.d: Int
         get() = this.y * w + this.x
 
-    fun neighbours(p: Vec2) =
-        offsets.map { it + p }.filter(matrix::contains)
+    fun neighbours4(p: Vec2) =
+        offsets4.map { it + p }.filter(matrix::contains)
+
+    fun neighbours8(p: Vec2) =
+        offsets8.map { it + p }.filter(matrix::contains)
+
+    fun forEach(consumer: (x: Int, y: Int) -> Unit) {
+        for ((i, row) in matrix.withIndex()) {
+            for (j in row.indices) {
+                consumer(i, j)
+            }
+        }
+    }
 
     operator fun List<List<T>>.get(p: Vec2) = this[p.y][p.x]
+
+    override fun toString(): String {
+        return matrix.joinToString("\n") { it.toString() }
+    }
 
     companion object {
         fun intGridFromDigits(lines: List<String>): Grid<Int> {
             return Grid(lines.map { line ->
                 line.map { it.digitToInt() }
+                    .toMutableList()
             })
         }
     }
@@ -114,16 +137,21 @@ fun Grid<Int>.dijkstra(src: Vec2, dst: Vec2): Int {
     pq.add(src)
 
     while (pq.isNotEmpty()) {
-        val p = pq.remove()
-        if (!visited[p.d]) {
-            visited[p.d] = true
-            neighbours(p).forEach {
-                distance[it.d] = min(distance[it.d], distance[p.d] + matrix[it])
-                if (!visited[it.d]) {
-                    pq.add(it)
+        val p = pq.poll()
+        val pd = distance[p.d]
+
+        neighbours4(p).forEach { n ->
+            if (!visited[n.d]) {
+                val newDistance = pd + matrix[n]
+                if (newDistance < distance[n.d]) {
+                    pq.remove(n)
+                    distance[n.d] = newDistance
+                    pq.add(n)
                 }
             }
         }
+
+        visited[p.d] = true
     }
 
     return distance[dst.d]

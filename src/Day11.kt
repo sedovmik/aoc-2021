@@ -2,68 +2,40 @@ import java.util.*
 
 fun main() {
 
-    class Grid(val arr: MutableList<MutableList<Int>>) {
+    fun Grid<Int>.step(): Int {
 
-        val offsets = listOf(
-            1 to 0,
-            1 to 1,
-            0 to 1,
-            -1 to 1,
-            -1 to 0,
-            -1 to -1,
-            0 to -1,
-            1 to -1,
-        )
-
-        fun step(): Int {
-            val queue = LinkedList<Pair<Int, Int>>()
-            for ((i, row) in arr.withIndex()) {
-                for (j in row.indices) {
-                    inc(i, j, queue)
-                }
-            }
-
-            while (queue.isNotEmpty()) {
-                val pair = queue.poll()
-                offsets.map { it.first + pair.first to it.second + pair.second }
-                    .filter { it.first in arr.indices && it.second in arr[it.first].indices }
-                    .forEach {
-                        inc(it.first, it.second, queue)
-                    }
-            }
-
-            var flashes = 0
-            for ((i, row) in arr.withIndex()) {
-                for ((j, value) in row.withIndex()) {
-                    if (value == 10) {
-                        arr[i][j] = 0
-                        flashes++
-                    }
-                }
-            }
-
-            return flashes
-        }
-
-        private fun inc(i: Int, j: Int, queue: LinkedList<Pair<Int, Int>>) {
-            if (arr[i][j] < 10) {
-                arr[i][j]++
-                if (arr[i][j] == 10) {
-                    queue.add(i to j)
+        val queue = LinkedList<Vec2>()
+        val inc = { i: Int, j: Int ->
+            if (matrix[i][j] < 10) {
+                matrix[i][j]++
+                if (matrix[i][j] == 10) {
+                    queue.add(Vec2(i, j))
                 }
             }
         }
 
-        override fun toString(): String {
-            return arr.joinToString("\n") { it.toString() }
+        forEach(inc)
+
+        while (queue.isNotEmpty()) {
+            val v = queue.poll()
+            neighbours8(v).forEach {
+                inc(it.x, it.y)
+            }
         }
+
+        var flashes = 0
+        forEach { i, j ->
+            if (matrix[i][j] == 10) {
+                matrix[i][j] = 0
+                flashes++
+            }
+        }
+
+        return flashes
     }
 
     fun part1(input: Sequence<String>): Int {
-        val arr = input.map { it.map(Char::digitToInt).toMutableList() }
-            .toMutableList()
-
-        val grid = Grid(arr)
+        val grid = Grid.intGridFromDigits(input.toList())
 
         var flashes = 0
         repeat(100) {
@@ -74,10 +46,7 @@ fun main() {
     }
 
     fun part2(input: Sequence<String>): Int {
-        val arr = input.map { it.map(Char::digitToInt).toMutableList() }
-            .toMutableList()
-
-        val grid = Grid(arr)
+        val grid = Grid.intGridFromDigits(input.toList())
 
         var step = 1
         while (grid.step() != 100) {

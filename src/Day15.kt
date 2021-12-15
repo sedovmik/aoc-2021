@@ -3,8 +3,8 @@ fun main() {
     fun Grid<Int>.extend(n: Int): Grid<Int> {
         return Grid(List(h * n) { y ->
             MutableList(w * n) { x ->
-                val k = y / h + x / w
-                (matrix[y % h][x % w] + k - 1) % 9 + 1
+                val manh = y / h + x / w
+                (matrix[y % h][x % w] + manh - 1) % 9 + 1
             }
         })
     }
